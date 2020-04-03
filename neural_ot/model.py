@@ -31,7 +31,7 @@ class NeuralOT(nn.Module):
         """
         return torch.sum((x[:, None] - y) ** 2, dim=(-3, -2, -1))
 
-    def regularized_ot_dual_criterion(self, x, y):
+    def plan_criterion(self, x, y):
         """
         Parameters
         ----------
