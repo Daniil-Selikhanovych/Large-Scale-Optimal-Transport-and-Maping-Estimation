@@ -57,7 +57,7 @@ class ZipLoader(DataLoader):
 class UniformLoader(DataLoader):
     def __init__(self, dataset, batch_size, n_batches, *args, return_targets=False, **kwargs):
         """
-        ZipLoader allows to load batches in random manner without splitting the original data.
+        UniformLoader allows to load batches in random manner without splitting the original data.
         """
         us = UniformSampler([dataset], batch_size=batch_size, n_batches=n_batches)
         super().__init__(dataset, *args, batch_sampler=us, **kwargs)
