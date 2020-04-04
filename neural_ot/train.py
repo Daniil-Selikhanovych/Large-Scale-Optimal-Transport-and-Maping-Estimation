@@ -1,18 +1,17 @@
 
 
-def train(criterion, optimizer, batch_generator, batch_size, n_epochs, n_batches_per_epoch):
+def train(criterion, optimizer, batch_generator, n_epochs):
     losses = []
     for epoch in range(n_epochs):
-        epoch_avg_loss = 0
-        for x, y in batch_generator(n_batches_per_epoch, batch_size):
+        epoch_loss = 0
+        for x, y in batch_generator:
             optimizer.zero_grad()
             loss = criterion(x, y)
             loss.backward()
             optimizer.step()
 
-            epoch_avg_loss += loss.item()
+            epoch_loss += loss.item()
 
-        epoch_avg_loss /= n_batches_per_epoch
-        losses.append(epoch_avg_loss)
+        losses.append(epoch_loss)
 
     return losses
