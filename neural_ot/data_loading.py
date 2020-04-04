@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
+from tqdm import tqdm
 
 
 class UniformSampler:
@@ -34,9 +35,9 @@ class ZipDataset(Dataset):
         items = []
         for i, ds in zip(idx, self.datasets):
             if self.return_targets:
-                items.append(ds[i])
+                items.append([i, *ds[i]])
             else:
-                items.append(ds[i][0])
+                items.append([i, ds[i][0]])
         
         if len(items) == 1:
             items = items[0]
@@ -55,3 +56,35 @@ class ZipLoader(DataLoader):
         us = UniformSampler(*datasets, batch_size=batch_size, n_batches=n_batches)
         dl = ZipDataset(*datasets, return_targets=return_targets)
         super().__init__(dl, batch_sampler=us, **kwargs)
+
+
+def get_mean_covariance(mnist):
+    def rescale(data):
+        return 2 * (data / 255 - .5)
+
+    if hasattr(mnist, 'data'):
+        rescaled_data = rescale(mnist.data)
+    elif hasattr(mnist, 'datasets'):
+        rescaled_data = torch.cat([rescale(ds.data) for ds in mnist.datasets])
+    else:
+        raise ValueError('Argument ``mnist`` is invalid.')
+
+    rescaled_data = rescaled_data.reshape(len(rescaled_data), -1)
+    mean = torch.mean(rescaled_data, 0)
+    centered = rescaled_data - mean
+    covariance = 0
+    for c in tqdm(centered):
+        covariance += c[None] * c[:, None]
+    covariance /= (len(centered) - 1)
+    return mean, covariance
+
+
+def gaussian_sampler(mean, covariance, batch_size, n_batches, min_eigval=1e-3):
+    eigval, eigvec = torch.symeig(covariance, eigenvectors=True)
+    eigval, eigvec = eigval[eigval > min_eigval], eigvec[:, eigval > min_eigval]
+    height = width = int(np.sqrt(len(mean)))
+
+    for i in range(n_batches):
+        samples = torch.randn(batch_size, len(eigval))
+        samples = mean + (torch.sqrt(eigval) * samples) @ eigvec.T
+        yield None, samples.reshape(len(samples), 1, height, width)

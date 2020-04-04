@@ -16,13 +16,13 @@ tr = transforms.Compose([transforms.Resize((16, 16)),
                          transforms.ToTensor()])
 
 mnist_small_train = dset.MNIST("data/mnist", download=True, transform=tr, train=True)
-mnist_small_test  = dset.MNIST("data/mnist", download=True, transform=tr, train=False)
+mnist_small_test = dset.MNIST("data/mnist", download=True, transform=tr, train=False)
 
 mnist_train = dset.MNIST("data/mnist", download=True, transform=transforms.ToTensor(), train=True)
-mnist_test  = dset.MNIST("data/mnist", download=True, transform=transforms.ToTensor(), train=False)
+mnist_test = dset.MNIST("data/mnist", download=True, transform=transforms.ToTensor(), train=False)
 
 usps_train = dset.USPS("data/usps", download=True, transform=transforms.ToTensor(), train=True)
-usps_test  = dset.USPS("data/usps", download=True, transform=transforms.ToTensor(), train=False)
+usps_test = dset.USPS("data/usps", download=True, transform=transforms.ToTensor(), train=False)
 
 # Example of pairs sampling
 zl = ZipLoader([mnist_small_train, usps_train], batch_size=5, n_batches=2, pin_memory=is_cuda)
