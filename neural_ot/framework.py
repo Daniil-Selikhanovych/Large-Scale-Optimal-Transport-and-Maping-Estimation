@@ -38,8 +38,8 @@ class NeuralOT(nn.Module):
         distances : torch.tensor
             Tensor of shape ``(N_s, N_t)`` with pairwise l2 distances between source and target images.
         """
-        # return torch.sqrt(torch.sum((x - y) ** 2, dim=(-3, -2, -1)))
-        return torch.sum((x - y) ** 2, dim=(-3, -2, -1))
+        axes = [-(i+1) for i in range(len(x.shape)-1)]
+        return torch.sqrt(torch.sum((x - y) ** 2, dim=axes))
 
     def plan_criterion(self, x, x_idx, y, y_idx):
         """
@@ -169,7 +169,7 @@ class UniformSampler:
 
     def __iter__(self):
         for i in range(self.n_batches):
-            idx = [torch.multinomial(w, self.batch_size) for w in self.weights]
+            idx = [torch.multinomial(w, self.batch_size, replacement=True) for w in self.weights]
             yield torch.stack(idx, dim=1).squeeze()
 
     def __len__(self):
@@ -190,7 +190,7 @@ class ZipDataset(Dataset):
             items.append(dset[ids][0])
             if self.return_idx:
                 items.append(ids)
-        
+
         if len(items) == 1:
             items = items[0]
         
@@ -211,6 +211,54 @@ class ZipLoader(DataLoader):
         
     def __len__(self):
         return self.size
+
+class DistributionDataset():
+    def __init__(self, distribution, transform=lambda x: x):
+        super().__init__()
+        self.distribution = distribution
+        self.transform = transform
+        
+    def __getitem__(self, idx):
+        return self.transform(self.distribution.sample()), None
+    
+    def __len__(self):
+        return 1
+
+def get_rotation(theta):
+    rad = np.radians(theta)
+    c, s = np.cos(rad), np.sin(rad)
+    R = np.array([[c, -s],
+                  [s,  c]])
+    return R
+
+from torch.distributions.multivariate_normal import MultivariateNormal
+
+class CircleDataset():
+    def __init__(self, n_samples, n_centers=9, sigma=0.02):
+        super().__init__()
+        self.nus = [torch.zeros(2)]
+        self.sigma = sigma
+        for i in range(n_centers-1):
+            R = get_rotation(i*360/(n_centers-1))
+            self.nus.append(torch.tensor([1, 0] @ R, dtype=torch.float))
+        classes = torch.multinomial(torch.ones(n_centers), n_samples, 
+                                    replacement=True)
+        
+        data = []
+        for i in range(n_centers):
+            n_samples_class = torch.sum(classes == i)
+            if n_samples_class == 0:
+                continue
+            dist = MultivariateNormal(self.nus[i], 
+                                      torch.eye(2)*self.sigma**2)
+            data.append(dist.sample([n_samples_class.item()]))
+        self.data = torch.cat(data)
+        
+    def __getitem__(self, idx):
+        return self.data[idx], None
+    
+    def __len__(self):
+        return self.data.shape[0]
 
 class Vector(nn.Module):
     def __init__(self, n_dims):
