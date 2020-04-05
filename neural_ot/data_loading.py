@@ -70,13 +70,7 @@ def get_mean_covariance(mnist):
         raise ValueError('Argument ``mnist`` is invalid.')
 
     rescaled_data = rescaled_data.reshape(len(rescaled_data), -1)
-    mean = torch.mean(rescaled_data, 0)
-    centered = rescaled_data - mean
-    covariance = 0
-    for c in tqdm(centered):
-        covariance += c[None] * c[:, None]
-    covariance /= (len(centered) - 1)
-    return mean, covariance
+    return torch.mean(rescaled_data, 0), torch.from_numpy(np.cov(rescaled_data.T).astype(np.float32))
 
 
 def gaussian_sampler(mean, covariance, batch_size, n_batches, min_eigval=1e-3):
