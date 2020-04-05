@@ -42,22 +42,27 @@ sigma = torch.Tensor([0.02])
 init_cov_matrix = torch.eye(2)
 cov_matrix_default = sigma*init_cov_matrix
 
-data_mu_val_default = gaussian_data_sampling_mu(center_mu_default, 
+mu_data_val_default = gaussian_data_sampling_mu(center_mu_default, 
                                                      cov_matrix_default, 
                                                      batch_size_val_default, 
                                                      random_state_default, 
                                                      device = device_default)
-data_nu_val_default = gaussian_data_sampling_nu(centers_nu_default, 
+nu_data_val_default = gaussian_data_sampling_nu(centers_nu_default, 
                                                      cov_matrix_default, 
                                                      batch_size_val_default, 
                                                      random_state_default, 
                                                      device = device_default)
 
-nu_sampler_default = partial(nu_sampler_from_discrete_distr, device = device_default)
+nu_sampler_dicrete_default = partial(nu_sampler_from_discrete_distr, device = device_default)
 mu_sampler_default = partial(gaussian_data_sampling_mu, 
                                    center_mu = center_mu_default, 
                                    cov_matrix = cov_matrix_default, 
                                    device = device_default)
+nu_sampler_default = partial(gaussian_data_sampling_nu, 
+                                   centers_nu = centers_nu_default, 
+                                   cov_matrix = cov_matrix_default, 
+                                   device = device_default)
+
 
 
 torch.manual_seed(random_state_default)
@@ -65,6 +70,16 @@ D_in = 2
 D_out = 1
 H = 128
 u_net_default = torch.nn.Sequential(
+    torch.nn.Linear(D_in, H),
+    torch.nn.ReLU(),
+    torch.nn.Linear(H, 2*H),
+    torch.nn.ReLU(),
+    torch.nn.Linear(2*H, H),
+    torch.nn.ReLU(),
+    torch.nn.Linear(H, 1),
+)
+
+v_net_default = torch.nn.Sequential(
     torch.nn.Linear(D_in, H),
     torch.nn.ReLU(),
     torch.nn.Linear(H, 2*H),
@@ -87,9 +102,8 @@ f_net_default = torch.nn.Sequential(
 )
 
 v_vec_default = torch.zeros(batch_size_val_default, 
-                                   dtype = dtype_default, 
-                                   requires_grad = True, device = device_default)
+                                   dtype = dtype_default)
 
-#v_vec_default = torch.zeros(batch_size_val_default, 
-#                                   dtype = dtype_default, 
-#                                   requires_grad = True)
+plot_mapping_title_default = '1 and 8 gaussians'
+dir_to_save_default = 'figures'
+epoch_step_to_print_default = 50
