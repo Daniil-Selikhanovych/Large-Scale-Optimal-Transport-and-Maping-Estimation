@@ -17,8 +17,8 @@ batch_size = 1000
 tr = transforms.Compose([transforms.Resize((h, w)),
                          transforms.ToTensor()])
 
-mnist = dset.MNIST("data/mnist", download=True, transform=tr)
-usps = dset.USPS("data/usps", download=True, transform=transforms.ToTensor())
+mnist = dset.MNIST("../data/mnist", download=True, transform=tr)
+usps = dset.USPS("../data/usps", download=True, transform=transforms.ToTensor())
 
 n_batches = max(len(mnist), len(usps))//batch_size + 1
 pairs_loader = ZipLoader([mnist, usps], batch_size=batch_size, n_batches=n_batches, 
