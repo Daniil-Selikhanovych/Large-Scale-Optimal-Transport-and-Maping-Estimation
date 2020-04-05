@@ -32,46 +32,43 @@ v = Vector(len(usps))
 torch.nn.init.normal_(v.v, 15, 6)
 # torch.nn.init.normal_(v.v, 5, 2)
 
-# f = nn.Sequential(Reshape(-1, h*w),
-#                   nn.Linear(h*w, 200),
-#                   nn.BatchNorm1d(200),
-#                   nn.SELU(),
-#                   nn.Linear(200, 500),
-#                   nn.BatchNorm1d(500),
-#                   nn.SELU(),
-#                   nn.Linear(500, 1000),
-#                   nn.BatchNorm1d(1000),
-#                   nn.SELU(),
-#                   nn.Linear(1000, h*w),
-#                   nn.Sigmoid(),
-#                   Reshape(-1, 1, h, w))
-
-
-f = nn.Sequential(nn.Conv2d(1, 8, 3, stride=1, padding=1), # 16
-                  nn.BatchNorm2d(8),
-                  nn.SELU(),
-                  nn.Conv2d(8, 16, 3, stride=2, padding=1), # 8
-                  nn.BatchNorm2d(16),
-                  nn.SELU(),
-                  nn.Conv2d(16, 32, 3, stride=2, padding=1), # 4
-                  nn.BatchNorm2d(32),
-                  nn.SELU(),
-                  nn.Conv2d(32, 64, 3, stride=2, padding=1), # 2
-                  nn.BatchNorm2d(64),
-                  nn.SELU(),
-                  nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=0), # 4
-                  nn.BatchNorm2d(32),
-                  nn.SELU(),
-                  nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1), # 8
-                  nn.BatchNorm2d(16),
-                  nn.SELU(),
-                  nn.ConvTranspose2d(16, 8, kernel_size=3, stride=2, padding=1), # 16
-                  nn.BatchNorm2d(8),
-                  nn.SELU(),
-                  nn.ConvTranspose2d(8, 1, kernel_size=3, stride=1, padding=1), # 16
+f = nn.Sequential(Reshape(-1, h*w),
+                  nn.Linear(h*w, 200),
+                  nn.BatchNorm1d(200),
+                  nn.ReLU(),
+                  nn.Linear(200, 500),
+                  nn.BatchNorm1d(500),
+                  nn.ReLU(),
+                  nn.Linear(500, h*w),
                   nn.Sigmoid(),
-                  Interpolator(16, 16)
-)
+                  Reshape(-1, 1, h, w))
+
+
+# f = nn.Sequential(nn.Conv2d(1, 8, 3, stride=1, padding=1), # 16
+#                   nn.BatchNorm2d(8),
+#                   nn.SELU(),
+#                   nn.Conv2d(8, 16, 3, stride=2, padding=1), # 8
+#                   nn.BatchNorm2d(16),
+#                   nn.SELU(),
+#                   nn.Conv2d(16, 32, 3, stride=2, padding=1), # 4
+#                   nn.BatchNorm2d(32),
+#                   nn.SELU(),
+#                   nn.Conv2d(32, 64, 3, stride=2, padding=1), # 2
+#                   nn.BatchNorm2d(64),
+#                   nn.SELU(),
+#                   nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=0), # 4
+#                   nn.BatchNorm2d(32),
+#                   nn.SELU(),
+#                   nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1), # 8
+#                   nn.BatchNorm2d(16),
+#                   nn.SELU(),
+#                   nn.ConvTranspose2d(16, 8, kernel_size=3, stride=2, padding=1), # 16
+#                   nn.BatchNorm2d(8),
+#                   nn.SELU(),
+#                   nn.ConvTranspose2d(8, 1, kernel_size=3, stride=1, padding=1), # 16
+#                   nn.Sigmoid(),
+#                   Interpolator(16, 16)
+# )
 
 regularization_parameter = 0.07
 regularization_mode = "l2"

@@ -59,7 +59,7 @@ y_target = np.array(y_target)
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
-clf = KNeighborsClassifier(n_neighbors=1, metric="correlation")
+clf = KNeighborsClassifier(n_neighbors=1)#, metric="correlation")
 clf.fit(X_source, y_source)
 
 y_pred = clf.predict(X_target)
@@ -75,7 +75,7 @@ for i in tqdm(range(len(mnist)), "MNIST -> USPS"):
 X_source_mapped = torch.cat(X_source_mapped).reshape(-1, h*w).detach().numpy()
 y_source_mapped = np.array(y_source_mapped)
 
-clf = KNeighborsClassifier(n_neighbors=1, metric="correlation")
+clf = KNeighborsClassifier(n_neighbors=1)#, metric="correlation")
 clf.fit(X_source_mapped, y_source_mapped)
 
 y_pred = clf.predict(X_target)
