@@ -1,5 +1,6 @@
 import torch
 import time
+import copy
 
 from .gaussian_functions import index_sampler
 
@@ -26,14 +27,20 @@ class Neural_OT_continious_to_discrete(Neural_OT):
                  d_cost_type = d_cost_type_default,
                  dtype = dtype_default, device = device_default)
 
-        self.u = u_net.to(device)
-        self.v = v_vec.to(device)
+        u_copy = copy.deepcopy(u_net)
+        self.u = u_copy.to(device)
+        copy_v = v_vec.clone()
+        copy_v.requires_grad_
+        self.v = copy_v.to(device)
         
     def replace_u(self, u):
-        self.u = u.to(self.device)
+        u_copy = copy.deepcopy(u)
+        self.u = u_copy.to(self.device)
         
     def replace_v(self, v):
-        self.v = v.to(self.device)
+        copy_v = v.clone()
+        copy_v.requires_grad_
+        self.v = copy_v.to(self.device)
         
     def stochastic_OT_computation(self, epochs = epochs_default, batch_size = batch_size_default,
                                   random_state_val = random_state_default,

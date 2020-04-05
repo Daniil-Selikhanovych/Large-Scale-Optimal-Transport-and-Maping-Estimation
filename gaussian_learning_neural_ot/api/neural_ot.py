@@ -3,6 +3,8 @@ from torch import nn
 import numpy as np
 import matplotlib.pyplot as plt 
 import time
+import copy
+
 
 from .constants import (f_net_default, reg_mode_default, eps_default,
 			c_cost_type_default, d_cost_type_default,
@@ -28,7 +30,7 @@ class Neural_OT:
             raise ValueError(f"Only {reg_modes_arr[0]} and {reg_modes_arr[1]}" + \
                                 " regularization types are now available :(")
         
-        
+        f_copy = copy.deepcopy(f_net)
         self.f_net = f_net.to(device)
         self.reg_mode = reg_mode
         self.eps = eps
@@ -38,7 +40,8 @@ class Neural_OT:
         self.device = device
         
     def replace_f(self, f_net):
-        self.f_net = f_net.to(self.device)
+        f_copy = copy.deepcopy(f_net)
+        self.f_net = f_copy.to(self.device)
         
     def l2_dist_batch(self, x_batch, y_batch):
         diff = x_batch - y_batch
