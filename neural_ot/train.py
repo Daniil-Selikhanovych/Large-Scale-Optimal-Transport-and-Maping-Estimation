@@ -1,18 +1,23 @@
+from tqdm import tqdm
 
 
-def train(criterion, optimizer, batch_generator, batch_size, n_epochs, n_batches_per_epoch):
+def train(criterion, optimizer, batch_generator, n_epochs, device, scheduler=None):
     losses = []
-    for epoch in range(n_epochs):
-        epoch_avg_loss = 0
-        for x, y in batch_generator(n_batches_per_epoch, batch_size):
+    for epoch in tqdm(range(n_epochs)):
+        epoch_loss = 0
+        n_batches = 0
+        for (x_idx, x), (y_idx, y) in batch_generator:
             optimizer.zero_grad()
-            loss = criterion(x, y)
+            loss = criterion(x_idx, x.to(device), y_idx, y.to(device))
             loss.backward()
             optimizer.step()
 
-            epoch_avg_loss += loss.item()
+            epoch_loss += loss.item()
+            n_batches += 1
 
-        epoch_avg_loss /= n_batches_per_epoch
-        losses.append(epoch_avg_loss)
+        losses.append(epoch_loss / n_batches)
+
+        if scheduler is not None:
+            scheduler.step()
 
     return losses
