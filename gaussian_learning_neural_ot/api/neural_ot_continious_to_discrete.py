@@ -1,6 +1,8 @@
 import torch
 import time
 import copy
+import os
+import matplotlib.pyplot as plt 
 
 from .gaussian_functions import index_sampler
 
@@ -11,8 +13,11 @@ from .constants import (f_net_default, u_net_default, v_vec_default,
 			epochs_default, batch_size_default, 
 			dtype_default, device_default,
 			random_state_default, random_states_train_default,
-			mu_sampler_default, data_nu_val_default, 
-			optimizer_mode_default, lr_default)
+			mu_sampler_default, nu_data_val_default, 
+			optimizer_mode_default, lr_default,
+			plot_mapping_title_default,
+			dir_to_save_default,
+			epoch_step_to_print_default)
 			
 from .neural_ot import Neural_OT
 
@@ -47,11 +52,12 @@ class Neural_OT_continious_to_discrete(Neural_OT):
                                   random_states_train = random_states_train_default,
                                   mu_sampler = mu_sampler_default, 
                                   index_sampler = index_sampler,
-                                  nu_data = data_nu_val_default,
+                                  nu_data = nu_data_val_default,
                                   optimizer_mode = optimizer_mode_default, 
                                   lr = lr_default,
                                   loss_arr_batch = [],
-                                  loss_arr_val = []):
+                                  loss_arr_val = [],
+                                  epoch_step_to_print = epoch_step_to_print_default):
         if (self.v.shape[0] != nu_data.shape[0]):
             raise ValueError("Vector v and nu_data should be the same size!")
 
@@ -104,7 +110,7 @@ class Neural_OT_continious_to_discrete(Neural_OT):
             
             loss_val_maximization = -loss_val.item()
             
-            if (epoch % 50 == 0):
+            if (epoch % epoch_step_to_print == 0):
             	print("------------------------------")
             	print(f"Epoch_num = {epoch + 1}")
             	print(f"Consumed time = {consumed_time} seconds")
@@ -119,11 +125,21 @@ class Neural_OT_continious_to_discrete(Neural_OT):
                                   random_states_train = random_states_train_default,
                                   mu_sampler = mu_sampler_default, 
                                   index_sampler = index_sampler,
-                                  nu_data = data_nu_val_default,
+                                  nu_data = nu_data_val_default,
                                   optimizer_mode = optimizer_mode_default, 
                                   lr = lr_default,
                                   loss_arr_batch = [],
-                                  loss_arr_val = []):
+                                  loss_arr_val = [],
+                                  make_gif = False,
+                                  dir_to_save = dir_to_save_default,
+                                  random_state_plot = random_state_default,
+                                  epoch_step_to_print = epoch_step_to_print_default):
+        
+        if (self.v.shape[0] != nu_data.shape[0]):
+            raise ValueError("Vector v and nu_data should be the same size!")
+                                  
+        if (make_gif and not os.path.exists(dir_to_save)):
+            os.mkdir(dir_to_save)                          
         
         trainable_params = list(self.f_net.parameters())
         
@@ -176,25 +192,51 @@ class Neural_OT_continious_to_discrete(Neural_OT):
             loss_val = self.mapping_OT_loss_estimation(u_batch, v_batch, x_batch, y_batch, map_batch)
             
             loss_val = loss_val.item()
-            if (epoch % 50 == 0):
+            if (epoch % epoch_step_to_print == 0):
             	print("------------------------------")
             	print(f"Epoch_num = {epoch + 1}")
             	print(f"Consumed time = {consumed_time} seconds")
             	print(f"Loss estimation on sampled data = {loss_batch}")
             	print(f"Loss estimation on validation data = {loss_val}")
+            	if make_gif:
+            	    plot_mapping_title = plot_mapping_title_default + \
+            	          fr', optimizer = {optimizer_mode}, $lr = {lr}$, epoch = {epoch + 1}, regularization type = {self.reg_mode}, $\varepsilon = {self.eps}$'
+            	    name_fig = f'gaussians_optimizer_{optimizer_mode}_lr_{lr}_epoch_{epoch + 1}_regularization_type_{self.reg_mode}_epsilon_{self.eps}.png'
+            	    name_fig = os.path.join(dir_to_save, name_fig)
+            	    
+            	    self.plot_2d_mapping_discrete_nu(nu_data_val = nu_data,
+                        	   		     mu_sampler = mu_sampler, 
+                        	                     random_state = random_state_plot, 
+                        	                     plot_mapping_title = plot_mapping_title,
+                                                     save_plot = True,
+                                                     name_fig = name_fig)     
 
             loss_arr_batch.append(loss_batch)
             loss_arr_val.append(loss_val)
+     
+        if make_gif:
+            cmdline = 'convert -delay 100 '
+            output = f'gaussians_optimizer_{optimizer_mode}_lr_{lr}_regularization_type_{self.reg_mode}_epsilon_{self.eps}.gif'
+            for epoch in range(0, epochs, epoch_step_to_print):
+                name_fig = f'gaussians_optimizer_{optimizer_mode}_lr_{lr}_epoch_{epoch + 1}_regularization_type_{self.reg_mode}_epsilon_{self.eps}.png'
+                name_fig = os.path.join(dir_to_save, name_fig)
+                cmdline += name_fig + ' '
+            cmdline += output
+            os.system(cmdline)
             
     def optimal_map_learning_algo_2(self, epochs = epochs_default, batch_size = batch_size_default,
                                   random_state_val = random_state_default,
                                   random_states_train = random_states_train_default,
                                   mu_sampler = mu_sampler_default, 
                                   index_sampler = index_sampler,
-                                  nu_data = data_nu_val_default,
+                                  nu_data = nu_data_val_default,
                                   lr = lr_default,
                                   loss_arr_batch = [],
-                                  loss_arr_val = []):
+                                  loss_arr_val = [],
+                                  epoch_step_to_print = epoch_step_to_print_default):
+        
+        if (self.v.shape[0] != nu_data.shape[0]):
+            raise ValueError("Vector v and nu_data should be the same size!")
         
         for epoch in range(epochs):
 
@@ -248,7 +290,7 @@ class Neural_OT_continious_to_discrete(Neural_OT):
             
             loss_val = loss_val.item()
             
-            if (epoch % 50 == 0):
+            if (epoch % epoch_step_to_print == 0):
             	print("------------------------------")
             	print(f"Epoch_num = {epoch + 1}")
             	print(f"Consumed time = {consumed_time} seconds")
@@ -257,3 +299,50 @@ class Neural_OT_continious_to_discrete(Neural_OT):
 
             loss_arr_batch.append(loss_batch)
             loss_arr_val.append(loss_val)
+            
+    def plot_2d_mapping_discrete_nu(self, nu_data_val = nu_data_val_default,
+                        	   mu_sampler = mu_sampler_default, 
+                        	   random_state = random_state_default, 
+                        	   plot_mapping_title = plot_mapping_title_default,
+                                   save_plot = False,
+                                   name_fig = None,
+                                   show_plot = False):
+        fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+
+        ax.set_xlabel(r'$x$') 
+        ax.set_ylabel(r'$y$') 
+        plt.title(plot_mapping_title) 
+
+
+        nu_data_plot = nu_data_val.cpu().detach().numpy()
+        mu_data_plot = mu_sampler(random_state = random_state, 
+                                 batch_size = nu_data_plot.shape[0])
+
+        self.f_net.eval()
+        mapping = self.f_net(mu_data_plot)
+        mapping = mapping.cpu().detach().numpy()
+
+        mu_data_plot = mu_data_plot.cpu().detach().numpy()
+
+        ax.scatter(mu_data_plot[:, 0], mu_data_plot[:, 1], 
+                    label = r'$\mu$-s gaussian', marker='+')
+        ax.scatter(nu_data_plot[:, 0], nu_data_plot[:, 1], 
+                    label = r'$\nu$-s gaussians', marker='+', color = 'r')
+
+        ax.scatter(mapping[:, 0], mapping[:, 1], 
+                    label = r'result mapping', marker='+', color = 'g')
+
+        #plt.scatter(data_mu_validate_plot[:, 0], data_mu_validate_plot[:, 1], 
+        #            label = r'$\mu$-s gaussians', marker='+')
+
+        ax.legend()
+        ax.grid(True)
+        
+        if (save_plot and name_fig is not None):
+            fig.savefig(name_fig)    
+        
+        if show_plot:
+            plt.show()
+        
+        else:
+            plt.close()

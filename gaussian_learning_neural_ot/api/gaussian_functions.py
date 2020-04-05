@@ -63,3 +63,5 @@ def nu_sampler_from_discrete_distr(nu_data, batch_size, random_state, device = N
                                       device = device)
     
     return nu_data[indexes_to_choice, :]
+    
+    

@@ -4,13 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import time
 import copy
+from IPython.display import Image
+import os
 
 
 from .constants import (f_net_default, reg_mode_default, eps_default,
 			c_cost_type_default, d_cost_type_default,
 			reg_modes_arr,
-			dtype_default, device_default,
-			data_nu_val_default, mu_sampler_default, 
+			dtype_default, device_default, mu_sampler_default, 
 			random_state_default)
 
 class Neural_OT:
@@ -127,7 +128,7 @@ class Neural_OT:
         plt.xlabel(r'$iter$') 
         plt.ylabel(r'$loss \; estimation$') 
         plt.title(first_part_title + \
-                  fr'optimizer = {optimizer_mode}, $lr = {lr}$, $\varepsilon = {self.eps}$') 
+                  fr'optimizer = {optimizer_mode}, $lr = {lr}$, regularization type = {self.reg_mode}, $\varepsilon = {self.eps}$') 
 
         plt.plot(range(len(loss_arr_batch)), loss_arr_batch, label = r'last batch')
         plt.plot(range(len(loss_arr_batch)), loss_arr_val, label = r'validation data')
@@ -135,35 +136,6 @@ class Neural_OT:
         plt.legend()
         plt.grid(True) 
         
-    def plot_2d_mapping(self, data_nu_val = data_nu_val_default,
-                        mu_sampler = mu_sampler_default, random_state = random_state_default):
-        fig = plt.figure(figsize=(10,10))
-
-        plt.xlabel(r'$x$') 
-        plt.ylabel(r'$y$') 
-        plt.title('1 and 8 gaussians') 
-
-
-        data_nu_plot = data_nu_val.cpu().detach().numpy()
-        data_mu_plot = mu_sampler(random_state = random_state, 
-                                 batch_size = data_nu_plot.shape[0])
-
-        self.f_net.eval()
-        mapping = self.f_net(data_mu_plot)
-        mapping = mapping.cpu().detach().numpy()
-
-        data_mu_plot = data_mu_plot.cpu().detach().numpy()
-
-        plt.scatter(data_mu_plot[:, 0], data_mu_plot[:, 1], 
-                    label = r'$\mu$-s gaussian', marker='+')
-        plt.scatter(data_nu_plot[:, 0], data_nu_plot[:, 1], 
-                    label = r'$\nu$-s gaussians', marker='+', color = 'r')
-
-        plt.scatter(mapping[:, 0], mapping[:, 1], 
-                    label = r'result mapping', marker='+', color = 'g')
-
-        #plt.scatter(data_mu_validate_plot[:, 0], data_mu_validate_plot[:, 1], 
-        #            label = r'$\mu$-s gaussians', marker='+')
-
-        plt.legend()
-        plt.grid(True) 
+    def create_path_to_gif(self, optimizer_mode, lr):
+        gif = f'gaussians_optimizer_{optimizer_mode}_lr_{lr}_regularization_type_{self.reg_mode}_epsilon_{self.eps}.gif'
+        return os.path.expanduser(gif)
