@@ -80,10 +80,12 @@ train(n_epochs//2, model, model.mapping_criterion, mapping_optimizer, pairs_load
     scheduler=mapping_scheduler)
 torch.save(model.cpu(), f"generator")
 
-n_samples = 5
+samples_per_row = 10
+n_rows = 10
+n_samples = n_rows * samples_per_row
 model = torch.load("generator")
 
-fig, axes = plt.subplots(2, n_samples, figsize=(10, 6))
+fig, axes = plt.subplots(n_rows, samples_per_row, figsize=(10, 8))
 
 for i in range(n_samples):
     img = distr.sample()

@@ -87,7 +87,7 @@ mapping_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(mapping_optimizer
                                                             factor=0.5)
 
 print("Training u, v")   
-n_epochs = 200                               
+n_epochs = 500                               
 train(n_epochs, model, model.plan_criterion, plan_optimizer, pairs_loader,
     scheduler=plan_scheduler)
 torch.save(model.cpu(), "model_last")
@@ -95,22 +95,3 @@ print("Training f")
 train(n_epochs//2, model, model.mapping_criterion, mapping_optimizer, pairs_loader,
     scheduler=mapping_scheduler)
 torch.save(model.cpu(), f"model_last")
-
-n_samples = 5
-model = torch.load("model_last")
-
-fig, axes = plt.subplots(2, n_samples, figsize=(10, 6))
-
-for i in range(n_samples):
-    img = mnist[i][0]
-    axes[0, i].imshow(img.squeeze(), cmap="Greys")
-    axes[0, i].set_xticks([])
-    axes[0, i].set_yticks([])
-
-    mapped = model.map(img)
-    axes[1, i].imshow(mapped.squeeze().detach().numpy(), cmap="Greys")
-    axes[1, i].set_xticks([])
-    axes[1, i].set_yticks([])
-    
-plt.tight_layout()
-fig.savefig("last.png")
