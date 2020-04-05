@@ -15,7 +15,7 @@ torch.manual_seed(1)
 h, w = 28, 28
 batch_size = 1000
 
-mnist = dset.MNIST("data/mnist", download=True, transform=transforms.ToTensor())
+mnist = dset.MNIST("../data/mnist", download=True, transform=transforms.ToTensor())
 X = mnist.data.reshape(-1, h*w).float()/255
 mu = torch.mean(X, dim=0, dtype=torch.float)
 sigma = torch.tensor(np.cov(X.T), dtype=torch.float)

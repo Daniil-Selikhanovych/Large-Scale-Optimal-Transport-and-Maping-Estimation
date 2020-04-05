@@ -14,8 +14,8 @@ from framework import *
 h, w = 16, 16
 tr = transforms.Compose([transforms.Resize((h, w)),
                          transforms.ToTensor()])
-mnist = dset.MNIST("data/mnist", download=True, transform=tr)
-usps = dset.USPS("data/usps", download=True, transform=transforms.ToTensor())
+mnist = dset.MNIST("../data/mnist", download=True, transform=tr)
+usps = dset.USPS("../data/usps", download=True, transform=transforms.ToTensor())
 
 n_samples = 10
 idx = torch.multinomial(torch.ones(len(mnist)), n_samples)
