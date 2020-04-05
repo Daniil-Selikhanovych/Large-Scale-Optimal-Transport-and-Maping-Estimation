@@ -56,9 +56,6 @@ class Neural_OT_continious_to_discrete(Neural_OT):
             optimizer = torch.optim.SGD(trainable_params, lr = lr)
 
         for epoch in range(epochs):
-            
-            print("------------------------------")
-            print(f"Epoch_num = {epoch}")
 
             start_time = time.time()
             
@@ -83,10 +80,8 @@ class Neural_OT_continious_to_discrete(Neural_OT):
 
             end_time = time.time()
             consumed_time = end_time - start_time
-            print(f"Consumed time = {consumed_time} seconds")
 
             loss_batch_maximization = -loss_batch.item()
-            print(f"Loss estimation on sampled data = {loss_batch_maximization}")
             
             x_batch_val = mu_sampler(random_state = random_state_val, batch_size = nu_data.shape[0])
             y_batch_val = nu_data
@@ -101,7 +96,13 @@ class Neural_OT_continious_to_discrete(Neural_OT):
                                                          x_batch_val, y_batch_val)
             
             loss_val_maximization = -loss_val.item()
-            print(f"Loss estimation on validation data = {loss_val_maximization}")
+            
+            if (epoch % 50 == 0):
+            	print("------------------------------")
+            	print(f"Epoch_num = {epoch + 1}")
+            	print(f"Consumed time = {consumed_time} seconds")
+            	print(f"Loss estimation on sampled data = {loss_batch_maximization}")
+            	print(f"Loss estimation on validation data = {loss_val_maximization}")
 
             loss_arr_batch.append(loss_batch_maximization)
             loss_arr_val.append(loss_val_maximization)
@@ -126,9 +127,6 @@ class Neural_OT_continious_to_discrete(Neural_OT):
             
 
         for epoch in range(epochs):
-            
-            print("------------------------------")
-            print(f"Epoch_num = {epoch}")
 
             start_time = time.time()
             
@@ -156,10 +154,8 @@ class Neural_OT_continious_to_discrete(Neural_OT):
 
             end_time = time.time()
             consumed_time = end_time - start_time
-            print(f"Consumed time = {consumed_time} seconds")
 
             loss_batch = loss_batch.item()
-            print(f"Loss estimation on sampled data = {loss_batch}")
             
             x_batch_val = mu_sampler(random_state = random_state_val, batch_size = nu_data.shape[0])
             y_batch_val = nu_data
@@ -173,7 +169,12 @@ class Neural_OT_continious_to_discrete(Neural_OT):
             loss_val = self.mapping_OT_loss_estimation(u_batch, v_batch, x_batch, y_batch, map_batch)
             
             loss_val = loss_val.item()
-            print(f"Loss estimation on validation data = {loss_val}")
+            if (epoch % 50 == 0):
+            	print("------------------------------")
+            	print(f"Epoch_num = {epoch + 1}")
+            	print(f"Consumed time = {consumed_time} seconds")
+            	print(f"Loss estimation on sampled data = {loss_batch}")
+            	print(f"Loss estimation on validation data = {loss_val}")
 
             loss_arr_batch.append(loss_batch)
             loss_arr_val.append(loss_val)
@@ -189,8 +190,7 @@ class Neural_OT_continious_to_discrete(Neural_OT):
                                   loss_arr_val = []):
         
         for epoch in range(epochs):
-            print("------------------------------")
-            print(f"Epoch_num = {epoch}")
+
             x_batch = mu_sampler(random_state = random_states_train[epoch], batch_size = batch_size)
             
             indexes_to_choice = index_sampler(nu_data_shape = nu_data.shape[0], 
@@ -224,10 +224,8 @@ class Neural_OT_continious_to_discrete(Neural_OT):
 
             end_time = time.time()
             consumed_time = end_time - start_time
-            print(f"Consumed time = {consumed_time} seconds")
 
             loss_batch = loss_batch.item()
-            print(f"Loss estimation on sampled data = {loss_batch}")
             
             x_batch_val = mu_sampler(random_state = random_state_val, batch_size = nu_data.shape[0])
             y_batch_val = nu_data
@@ -242,100 +240,13 @@ class Neural_OT_continious_to_discrete(Neural_OT):
                                                        x_batch_val, y_batch_val, map_batch_val)
             
             loss_val = loss_val.item()
-            print(f"Loss estimation on validation data = {loss_val}")
+            
+            if (epoch % 50 == 0):
+            	print("------------------------------")
+            	print(f"Epoch_num = {epoch + 1}")
+            	print(f"Consumed time = {consumed_time} seconds")
+            	print(f"Loss estimation on sampled data = {loss_batch}")
+            	print(f"Loss estimation on validation data = {loss_val}")
 
             loss_arr_batch.append(loss_batch)
-            loss_arr_validate.append(loss_val)
-            
-    def optimal_map_learning_algo_2_slow(self, epochs = epochs_default, batch_size = batch_size_default,
-                                  random_state_val = random_state_default,
-                                  random_states_train = random_states_train_default,
-                                  mu_sampler = mu_sampler_default, 
-                                  index_sampler = index_sampler,
-                                  nu_data = data_nu_val_default,
-                                  lr = lr_default,
-                                  loss_arr_batch = [],
-                                  loss_arr_val = []):
-        
-        for epoch in range(epochs):
-            print("------------------------------")
-            print(f"Epoch_num = {epoch}")
-            x_batch = mu_sampler(random_state = random_states_train[epoch], batch_size = batch_size)
-            
-            indexes_to_choice = index_sampler(nu_data_shape = nu_data.shape[0], 
-                                              batch_size = batch_size, 
-                                              random_state = random_states_train[epoch], 
-                                              device = self.device)
-            y_batch = nu_data[indexes_to_choice, :]
-            u_batch = (self.u)(x_batch)
-            v_batch = (self.v)[indexes_to_choice]
-            
-            f_params_dict = {params_name: params for params_name, params in zip(self.f_net.state_dict(), 
-                                                                         self.f_net.parameters())}
-        
-            f_upd_grad_dict = f_params_dict
-            
-            start_time = time.time()
-            
-            for i in range(batch_size):
-                for j in range(batch_size):
-                    #print(f"i = {i}, j = {j}, calculation gradient")
-                    x = x_batch[i]
-                    y = y_batch[j]
-
-                    u = u_batch[i]
-                    v = v_batch[j]
-
-                    H_eps = self.H_eps_batch(u, v, x, y)
-
-                    self.f_net.zero_grad()
-                    map_result = self.f_net(x)
-                    
-                    #print(map_result)
-
-                    cur_loss = self.l2_dist_batch(map_result, y)
-                    #print(cur_loss.shape)
-                    #print(cur_loss)
-                    
-                    cur_loss.backward()
-
-                    f_grad_dict = {params_name: params.grad*H_eps*lr
-                               for params_name, params in zip(self.f_net.state_dict(), self.f_net.parameters())}
-
-                    for f_key in f_grad_dict.keys():
-                        f_upd_grad_dict[f_key] = f_upd_grad_dict[f_key] - f_grad_dict[f_key]
-            
-            for params_name, params in self.f_net.state_dict().items():
-                self.f_net.state_dict()[params_name].data.copy_(f_upd_grad_dict[params_name])
-
-            end_time = time.time()
-            consumed_time = end_time - start_time
-            print(f"Consumed time = {consumed_time} seconds")
-            
-            self.f_net.eval()
-            map_batch = (self.f_net)(x_batch)
-            
-            loss_last_batch = self.mapping_OT_loss_estimation(u_batch, v_batch, x_batch, y_batch, map_batch)
-            
-            loss_last_batch = loss_last_batch.item()
-            
-            
-            print(f"Loss estimation on sampled data = {loss_last_batch}")
-            
-            x_batch_val = mu_sampler(random_state = random_state_val, batch_size = nu_data.shape[0])
-            y_batch_val = nu_data
-            
-            u_batch_val = (self.u)(x_batch_val)
-            v_batch_val = self.v
-            
-            self.f_net.eval()
-            map_batch_val = (self.f_net)(x_batch)
-            
-            loss_val = self.mapping_OT_loss_estimation(u_batch_val, v_batch_val, 
-                                                       x_batch_val, y_batch_val, map_batch_val)
-            
-            loss_val = loss_val.item()
-            print(f"Loss estimation on validation data = {loss_val}")
-
-            loss_arr_batch.append(loss_last_batch)
             loss_arr_val.append(loss_val)
