@@ -25,10 +25,10 @@ In this experiment we learn to transform samples from the unimodal Multivariate 
 
 It is a widespread problem to have two similar datasets, but be able to train a classifier on only one of them, let's call it *target*. The other dataset will be called *source*. We can deal with this problem by computing an optimal mapping between the *source* and the *target*. Now during training we can use mapped samples from the *source* dataset in addition to *target* dataset samples. We test this assumtion by training *1-kNN* on the untransformed *source* and then - on the transformed samples from *source*. 
 
-### Generative Modelling
+### Generative modeling
 
 <p align="center">
-  <img width="500" alt="Generative Modelling" src="https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/img/generated.png?raw=true">
+  <img width="500" alt="Generative modeling" src="https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/img/generated.png?raw=true">
 </p>
 
 Suppose, we have computed an optimal transport between some simple distribution (Multivariate Normal, for example) into a much more complex one. In our case we work with the digits from the MNIST dataset. We can then use the optimal mapping to generate new MNIST-like samples. One can first sample several points from the Multivariate Normal and then transform them into the desired images.
@@ -53,7 +53,7 @@ All the experiments can be found in the underlying notebooks:
 |-----------|------------|
 |[notebooks/toy_experiment.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/toy_experiment.ipynb) | **Toy Experiment:** Transform Standard Multivariate Normal into multimodal mixture of Multivariate Normals.|
 |[notebooks/generative_modeling.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/domain_adaptation.ipynb) | **Domain Adaptation:** Turn the digits from [MNIST](http://yann.lecun.com/exdb/mnist/) into the [USPS](https://web.stanford.edu/~hastie/StatLearnSparsity_files/DATA/zipcode.html)-like digits.  
-|[notebooks/generative_modeling.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/generative_modeling.ipynb)| **Generative Modelling**: Transform a Multivariate Normal sample to the digit image. |
+|[notebooks/generative_modeling.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/generative_modeling.ipynb)| **Generative modeling**: Transform a Multivariate Normal sample to the digit image. |
 |[gaussian_learning_neural_ot/Gaussian_learning_OT.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/gaussian_learning_neural_ot/Gaussian_learning_OT.ipynb)| **Additional Experiments**: Extra experiments with the Multivariate Normal Distribution and GIF generation.
 
 For convenience, we have also implemented a framework and located it correspondingly in [neural_ot/](https://github.com/Daniil-Selikhanovych/neural-ot/tree/master/neural_ot) and [gaussian_learning_neural_ot/api/](https://github.com/Daniil-Selikhanovych/neural-ot/tree/master/gaussian_learning_neural_ot/api).
@@ -61,8 +61,8 @@ For convenience, we have also implemented a framework and located it correspondi
 ## Our team
 
 At the moment we are *Skoltech DS MSc, 2019-2021* students.
-* Daniil Selikhanovych
-* Aleksandr Artemenkov
-* Anastasiia Kornilova
-* Alexander Borzilov
-* Mikhail Goncharov
+* Artemenkov Aleksandr 
+* Borzilov Alexander 
+* Goncharov Mikhail
+* Kornilova Anastasiia 
+* Selikhanovych Daniil
