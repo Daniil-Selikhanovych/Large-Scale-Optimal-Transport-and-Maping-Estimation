@@ -52,7 +52,7 @@ All the experiments can be found in the underlying notebooks:
 | Notebook      | Description |
 |-----------|------------|
 |[notebooks/toy_experiment.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/toy_experiment.ipynb) | **Toy Experiment:** Transform Standard Multivariate Normal into multimodal mixture of Multivariate Normals.|
-|[notebooks/generative_modeling.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/domain_adaptation.ipynb) | **Domain Adaptation:** Turn the digits from [MNIST](http://yann.lecun.com/exdb/mnist/) into the [USPS](https://web.stanford.edu/~hastie/StatLearnSparsity_files/DATA/zipcode.html)-like digits.  
+|[notebooks/domain_adaptation.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/domain_adaptation.ipynb) | **Domain Adaptation:** Turn the digits from [MNIST](http://yann.lecun.com/exdb/mnist/) into the [USPS](https://web.stanford.edu/~hastie/StatLearnSparsity_files/DATA/zipcode.html)-like digits.  
 |[notebooks/generative_modeling.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/generative_modeling.ipynb)| **Generative Modeling**: Transform a Multivariate Normal sample to the digit image. |
 |[gaussian_learning_neural_ot/Gaussian_learning_OT.ipynb](https://nbviewer.jupyter.org/github/Daniil-Selikhanovych/neural-ot/blob/master/gaussian_learning_neural_ot/Gaussian_learning_OT.ipynb)| **Additional Experiments**: Extra experiments with the Multivariate Normal Distribution and GIF generation.
 
