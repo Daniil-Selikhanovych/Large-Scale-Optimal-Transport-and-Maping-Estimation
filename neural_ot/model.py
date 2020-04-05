@@ -119,8 +119,6 @@ class Vector(nn.Module):
 
     def forward(self, idx):
         return self.v[idx]
-<<<<<<< HEAD
-=======
 
 
 class Reshaper(nn.Module):
@@ -151,4 +149,3 @@ class Interpolator(nn.Module):
     def forward(self, input):
         return torch.nn.functional.interpolate(input, self.shape, mode=self.mode,
                                                align_corners=False)
->>>>>>> mnist_usps
