@@ -119,3 +119,33 @@ class Vector(nn.Module):
 
     def forward(self, idx):
         return self.v[idx]
+
+
+class Reshaper(nn.Module):
+    def __init__(self, *shape):
+        super().__init__()
+        self.shape = shape
+        
+    def forward(self, input):
+        return input.view(*self.shape)
+
+
+class Debugger(nn.Module):
+    def __init__(self, name=""):
+        super().__init__()
+        self.name = name
+        
+    def forward(self, input):
+        print(self.name, input.shape)
+        return input
+
+
+class Interpolator(nn.Module):
+    def __init__(self, *shape, mode="bilinear"):
+        super().__init__()
+        self.shape = shape
+        self.mode = mode
+        
+    def forward(self, input):
+        return torch.nn.functional.interpolate(input, self.shape, mode=self.mode,
+                                               align_corners=False)
