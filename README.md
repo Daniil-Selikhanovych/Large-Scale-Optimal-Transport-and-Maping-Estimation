@@ -36,12 +36,12 @@ Suppose, we have computed an optimal transport between some simple distribution 
 
 ## Requirements
 
-The following packages are used in the implementation:
-* [PyTorch](https://pytorch.org/get-started/locally/)
-* [NumPy](https://numpy.org/)
-* [scikit-learn](https://scikit-learn.org/stable/)
-* [matplotlib](https://matplotlib.org/)
-* [tqdm](https://github.com/tqdm/tqdm)
+We have run the experiments on Linux. The versions are given in brackets. The following packages are used in the implementation:
+* [PyTorch (1.4.0)](https://pytorch.org/get-started/locally/)
+* [NumPy (1.17.3)](https://numpy.org/)
+* [scikit-learn (0.22.1)](https://scikit-learn.org/stable/)
+* [matplotlib (3.1.2)](https://matplotlib.org/)
+* [tqdm (4.39.0)](https://github.com/tqdm/tqdm)
 
 You can use [`pip`](https://pip.pypa.io/en/stable/) or [`conda`](https://docs.conda.io/en/latest/) to install them. We heavily used GPU in our experiments and recommend to use CUDA version of *PyTorch*.
 

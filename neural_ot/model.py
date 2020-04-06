@@ -31,7 +31,8 @@ class NeuralOT(nn.Module):
         distances : torch.tensor
             Tensor of shape ``(N_s, N_t)`` with pairwise l2 distances between source and target images.
         """
-        return torch.sum((x[:, None] - y) ** 2, dim=(-3, -2, -1))
+        dims = [-(i+1) for i in range(len(x.shape)-1)]
+        return torch.sum((x[:, None] - y) ** 2, dim=dims)
 
     def plan_criterion(self, x_idx, x, y_idx, y):
         """

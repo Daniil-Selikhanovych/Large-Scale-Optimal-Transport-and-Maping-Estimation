@@ -90,13 +90,16 @@ def gaussian_sampler(mean, covariance, batch_size, n_batches, min_eigval=1e-3):
 
 
 class DistributionDataset():
-    def __init__(self, distribution, transform=lambda x: x):
+    def __init__(self, distribution, transform=None):
         super().__init__()
         self.distribution = distribution
         self.transform = transform
         
     def __getitem__(self, idx):
-        return self.transform(self.distribution.sample()), None
+        if self.transform:
+            return self.transform(self.distribution.sample()), None
+        else:
+            return self.distribution.sample(), None
     
     def __len__(self):
         return 1
