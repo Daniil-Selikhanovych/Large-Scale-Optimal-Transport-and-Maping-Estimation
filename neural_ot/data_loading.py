@@ -141,6 +141,22 @@ class CircleDataset():
         return self.data.shape[0]
 
 
+class CentersDataset(Dataset):
+    def __init__(self, n_centers=9):
+        super().__init__()
+        self.nus = [torch.zeros(2)]
+        for i in range(n_centers-1):
+            R = get_rotation(i*360/(n_centers-1))
+            self.nus.append(torch.tensor([1, 0] @ R, dtype=torch.float))
+        self.data = torch.stack(self.nus)
+        
+    def __getitem__(self, idx):
+        return self.data[idx], None
+    
+    def __len__(self):
+        return self.data.shape[0]
+
+
 class CustomGaussian:
     def __init__(self, mean, covariance, min_eigval=1e-3):
         self.mean = mean

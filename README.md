@@ -15,7 +15,7 @@ Here you can find a brief description of the experiments implemented in this rep
   <img width="500" alt="Toy Experiment 2" src="https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/img/gauss2.png?raw=true">
 </p>
 
-In this experiment we learn to transform samples from the unimodal Multivariate Normal into the pre-computed samples from multimodal mixture of other Multivariate Normals. We solve an Optimal Transport problem by representing the optimal mapping with neural network. Then we check that the original density has been successfully transformed.
+In this experiment we learn to **transform** samples from the unimodal Multivariate Normal (**continuous distribution**) into the pre-computed samples from multimodal mixture of other Multivariate Normals (**discrete distribution**). We solve an Optimal Transport problem by representing the optimal mapping with neural network. Then we check that the original density has been successfully transformed.
 
 ### Domain Adaptation
 
@@ -23,7 +23,7 @@ In this experiment we learn to transform samples from the unimodal Multivariate 
   <img width="500" alt="Domain Adaptation" src="https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/img/mappings.png?raw=true">
 </p>
 
-It is a widespread problem to have two similar datasets, but be able to train a classifier on only one of them, let's call it *target*. The other dataset will be called *source*. We can deal with this problem by computing an optimal mapping between the *source* and the *target*. Now during training we can use mapped samples from the *source* dataset in addition to *target* dataset samples. We test this assumtion by training *1-kNN* on the untransformed *source* and then - on the transformed samples from *source*. 
+It is a widespread problem to have two similar datasets, but be able to train a classifier on only one of them, let's call it *target*. The other dataset will be called *source*. We can deal with this problem by computing an **optimal mapping** between the *source* and the *target*. Now during training we can use **mapped samples** from the *source* dataset in addition to *target* dataset samples. We test this assumtion by training *1-NN* on the untransformed *source* and then — on the transformed samples from *source*. In our setting we study **MNIST** to **USPS** and **USPS** to **MNIST** mappings.
 
 ### Generative Modeling
 
@@ -31,7 +31,7 @@ It is a widespread problem to have two similar datasets, but be able to train a 
   <img width="500" alt="Generative Modeling" src="https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/img/generated.png?raw=true">
 </p>
 
-Suppose, we have computed an optimal transport between some simple distribution (Multivariate Normal, for example) into a much more complex one. In our case we work with the digits from the MNIST dataset. We can then use the optimal mapping to generate new MNIST-like samples. One can first sample several points from the Multivariate Normal and then transform them into the desired images.
+Suppose, we have computed an **optimal transport** between some simple distribution (Multivariate Normal, for example) into a much more complex one. In our case we work with the digits from the **MNIST** dataset. We can then use the optimal mapping to **generate** new **MNIST**-like samples. One can first sample several points from the **Multivariate Normal** and then transform them into the desired **images**.
 
 
 ## Requirements
@@ -52,7 +52,7 @@ All the experiments can be found in the underlying notebooks:
 | Notebook      | Description |
 |-----------|------------|
 |[notebooks/toy_experiment.ipynb](https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/toy_experiment.ipynb) | **Toy Experiment:** Transform Standard Multivariate Normal into multimodal mixture of Multivariate Normals.|
-|[notebooks/domain_adaptation.ipynb](https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/domain_adaptation.ipynb) | **Domain Adaptation:** Turn the digits from [MNIST](http://yann.lecun.com/exdb/mnist/) into the [USPS](https://web.stanford.edu/~hastie/StatLearnSparsity_files/DATA/zipcode.html)-like digits.  
+|[notebooks/domain_adaptation.ipynb](https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/domain_adaptation.ipynb) | **Domain Adaptation:** Turn the digits from [MNIST](http://yann.lecun.com/exdb/mnist/) into the [USPS](https://web.stanford.edu/~hastie/StatLearnSparsity_files/DATA/zipcode.html)-like digits and *vice versa*.  
 |[notebooks/generative_modeling.ipynb](https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/notebooks/generative_modeling.ipynb)| **Generative Modeling**: Transform a Multivariate Normal sample to the digit image. |
 |[gaussian_learning_neural_ot/Gaussian_learning_OT.ipynb](https://github.com/Daniil-Selikhanovych/neural-ot/blob/master/gaussian_learning_neural_ot/Gaussian_learning_OT.ipynb)| **Additional Experiments**: Extra experiments with the Multivariate Normal Distribution and GIF generation.
 
